@@ -1,0 +1,6 @@
+# Node related
+/node_modules
+# local vs config
+/.vscode
+# Local sql session
+/test.session.sql

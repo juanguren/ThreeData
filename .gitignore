@@ -4,3 +4,5 @@
 /.vscode
 # Local sql session
 /test.session.sql
+# environment variables
+/.env

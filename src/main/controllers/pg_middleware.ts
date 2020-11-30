@@ -6,7 +6,7 @@ import connectionPool from '../../pg_init';
 
 const pool = new Pool(connectionPool);
 
-const retrieveUsers = async (req : Request, res: Response) =>{
+const retrieveUsers = async (_req : Request, res: Response) =>{
     const response : QueryResult<object> = await pool.query('SELECT * FROM USERS');
     response.rows[0] 
         ? res.json({data: response.rows})

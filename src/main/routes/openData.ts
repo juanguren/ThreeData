@@ -1,12 +1,13 @@
 
 import { Router, json } from 'express';
 import {
-    retrieveOpenData
+    retrieveOpenData,
+    saveFoundData
 } from '../controllers/openMiddlewares';
 
 const dataRouter = Router();
 dataRouter.use(json());
 
-dataRouter.get("/", retrieveOpenData);
+dataRouter.get("/", retrieveOpenData, saveFoundData);
 
 export default dataRouter;

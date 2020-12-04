@@ -10,9 +10,26 @@ import { Pool, QueryResult } from "pg";
 import { Request, Response, NextFunction } from 'express';
 import connectionPool from '../../pg_init';
 import axios from 'axios';
+import { validResult } from '../interfaces/entities';
 
 const pool = new Pool(connectionPool);
 const { APP_TOKEN } = process.env;
+
+const validateParams = async (
+    req : Request,
+    res: Response,
+    next : NextFunction
+) =>{
+    const validParams = [
+        'a_o',
+        'departamento',
+    ]
+    if (req.body.includes(validParams)) {
+        next();
+    } else{
+        res.status(422).json({message: 'Error, missing param', validParams});
+    }
+}
 
 const retrieveOpenData = async (
     req : Request,
@@ -20,8 +37,11 @@ const retrieveOpenData = async (
     next : NextFunction
 ) =>{
     try {
+        const { a_o: year, departamento: dpto } = req.body;
+        
+        let ñ = '%C3%91'; // Letter ñ is actually recongnized by Node
         const request = await axios.get(
-            'https://www.datos.gov.co/resource/e4mc-qr8v.json?area=Puntos Vive Digital', {
+            `https://www.datos.gov.co/resource/rggv-qcwf.json?a_o=${year}&departamento=${dpto}`, {
             headers: {
                 'X-App-Token': APP_TOKEN
             }
@@ -39,6 +59,7 @@ const saveFoundData = async (
     res: Response
 ) =>{
     const dataToSave = req.params.data;
+    res.json(dataToSave[2])
 }
 
 export {

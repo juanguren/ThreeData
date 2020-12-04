@@ -8,6 +8,6 @@ import {
 const dataRouter = Router();
 dataRouter.use(json());
 
-dataRouter.get("/", retrieveOpenData, saveFoundData);
+dataRouter.post("/", retrieveOpenData, saveFoundData);
 
 export default dataRouter;

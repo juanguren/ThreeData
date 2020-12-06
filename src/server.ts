@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import moment from "moment";
 import testRouter from "./main/routes/users";
+import dataRouter from './main/routes/openData';
 
 const PORT = 5000 || 3000;
 const app = express();
@@ -10,6 +11,7 @@ app.get("/", (_req : Request, res : Response) =>{
 });
 
 app.use("/index", testRouter);
+app.use("/data", dataRouter);
 
 app.listen(PORT, () => {
     console.log("Listening in port " + PORT);

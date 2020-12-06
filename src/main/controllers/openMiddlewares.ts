@@ -9,7 +9,7 @@
 import { Pool, QueryResult } from "pg";
 import { Request, Response, NextFunction } from 'express';
 import connectionPool from '../../pg_init';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { validResult } from '../interfaces/entities';
 
 const pool = new Pool(connectionPool);
@@ -37,7 +37,7 @@ const retrieveOpenData = async (
         const { año: year, departamento: dpto } = req.body;
         
         let ñ = '%C3%91'; // Letter ñ is actually recongnized by Node
-        const request = await axios.get(
+        const request : AxiosResponse = await axios.get(
             `https://www.datos.gov.co/resource/rggv-qcwf.json?a_o=${year}&departamento=${dpto}`, {
             headers: {
                 'X-App-Token': APP_TOKEN

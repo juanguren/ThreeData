@@ -9,11 +9,11 @@ import {
     createUser
 } from '../controllers/pg_middleware';
 
-const testRouter = Router();
-testRouter.use(json());
+const userRouter = Router();
+userRouter.use(json());
 
-testRouter.get("/users", retrieveUsers);
-testRouter.post("/users", createUser);
-testRouter.get("/:data", receiveData);
+userRouter.get("/users", retrieveUsers);
+userRouter.post("/users", createUser);
+userRouter.get("/:data", receiveData);
 
-export default testRouter;
+export default userRouter;

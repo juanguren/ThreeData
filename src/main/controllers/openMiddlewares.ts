@@ -20,15 +20,12 @@ const validateParams = async (
     res: Response,
     next : NextFunction
 ) =>{
+    const { año, departamento } = req.body;
     const validParams = [
-        'a_o',
+        'año',
         'departamento',
     ]
-    if (req.body.includes(validParams)) {
-        next();
-    } else{
-        res.status(422).json({message: 'Error, missing param', validParams});
-    }
+    año && departamento ? next() : res.status(422).json({message: 'Error, missing param', validParams});
 }
 
 const retrieveOpenData = async (
@@ -37,7 +34,7 @@ const retrieveOpenData = async (
     next : NextFunction
 ) =>{
     try {
-        const { a_o: year, departamento: dpto } = req.body;
+        const { año: year, departamento: dpto } = req.body;
         
         let ñ = '%C3%91'; // Letter ñ is actually recongnized by Node
         const request = await axios.get(
@@ -47,8 +44,19 @@ const retrieveOpenData = async (
             }
         }).catch((error) => {throw Error(error)});
         const finalData = request.data;
-        req.params.data = finalData;
-        finalData == "" ? res.status(400).json({"error": "Empty response"}) : next();
+        const mappedData = finalData.map((all : any) : validResult => {
+            return {
+                department: all.departamento,
+                description: all.descripci_n,
+                email: all.correo_electronico,
+                name: all.raz_n_social,
+                product: all.producto_principal,
+                sector: all.sector,
+                year: all.a_o
+            }
+        });
+        req.params.data = mappedData;
+        finalData == "" ? res.status(400).json({"message": "Empty response"}) : next();
     } catch (error) {
         res.status(404).json(error);
     }
@@ -59,10 +67,10 @@ const saveFoundData = async (
     res: Response
 ) =>{
     const dataToSave = req.params.data;
-    res.json(dataToSave[2])
 }
 
 export {
     retrieveOpenData,
-    saveFoundData
+    saveFoundData,
+    validateParams
 }

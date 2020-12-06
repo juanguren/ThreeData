@@ -15,7 +15,7 @@ const retrieveUsers = async (_req : Request, res: Response) =>{
 
 const createUser = async (req : Request, res: Response) =>{
     const { age, email, name } = req.body;
-    const response = await pool.query(
+    const response: QueryResult<object> = await pool.query(
         `INSERT INTO users VALUES (age, email, name)
          VALUES ($1, $2, $3)`,
          [age, email, name]

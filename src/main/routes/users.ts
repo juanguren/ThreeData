@@ -14,7 +14,6 @@ testRouter.use(json());
 
 testRouter.get("/users", retrieveUsers);
 testRouter.post("/users", createUser);
-
 testRouter.get("/:data", receiveData);
 
 export default testRouter;

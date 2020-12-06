@@ -10,7 +10,7 @@ import { Pool, QueryResult } from "pg";
 import { Request, Response, NextFunction } from 'express';
 import connectionPool from '../../pg_init';
 import axios from 'axios';
-import { validResult } from '../interfaces/entities';
+import { validDataResult } from '../interfaces/entities';
 
 const pool = new Pool(connectionPool);
 const { APP_TOKEN } = process.env;
@@ -44,7 +44,7 @@ const retrieveOpenData = async (
             }
         }).catch((error) => {throw Error(error)});
         const finalData = request.data;
-        const mappedData = finalData.map((all : any) : validResult => {
+        const mappedData = finalData.map((all : any) : validDataResult => {
             return {
                 department: all.departamento,
                 description: all.descripci_n,

@@ -17,10 +17,11 @@ const getUser = () =>{
 }
 
 const createUser = (params: userEntity) =>{
+    const array = Object.values(params);
     return pool.query(
         `INSERT INTO users VALUES (age, email, name, username)
-         VALUES ($1, $2, $3, $4) RETURNING *`),
-         params;
+         VALUES ($1, $2, $3, $4) RETURNING *`,
+         array);
 }
 
 export default {

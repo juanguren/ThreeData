@@ -7,7 +7,7 @@ import {
 import {
     retrieveUsers,
     createUser
-} from '../controllers/pg_middleware';
+} from '../controllers/userMiddleware';
 
 const userRouter = Router();
 userRouter.use(json());

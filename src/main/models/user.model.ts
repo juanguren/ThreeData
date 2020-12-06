@@ -1,12 +1,12 @@
 
-import { Pool, QueryResult } from "pg";
+import { Pool } from "pg";
 import connectionPool from '../../pg_init';
 
 const pool = new Pool(connectionPool);
 
 interface userEntity {
     age: String;
-    email: Text;
+    email: String;
     name: String;
     username: String;
     isLogged?: Boolean;

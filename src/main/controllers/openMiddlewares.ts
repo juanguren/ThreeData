@@ -9,8 +9,9 @@
 import { Pool, QueryResult } from "pg";
 import { Request, Response, NextFunction } from 'express';
 import connectionPool from '../../pg_init';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { validDataResult } from '../interfaces/entities';
+import dataModel from '../models/data.model';
 
 const pool = new Pool(connectionPool);
 const { APP_TOKEN } = process.env;
@@ -36,7 +37,6 @@ const retrieveOpenData = async (
     try {
         const { año: year, departamento: dpto } = req.body;
         
-        let ñ = '%C3%91'; // Letter ñ is actually recongnized by Node
         const request : AxiosResponse = await axios.get(
             `https://www.datos.gov.co/resource/rggv-qcwf.json?a_o=${year}&departamento=${dpto}`, {
             headers: {
@@ -55,8 +55,7 @@ const retrieveOpenData = async (
                 year: all.a_o
             }
         });
-        req.params.data = mappedData;
-        finalData == "" ? res.status(400).json({"message": "Empty response"}) : next();
+        finalData == "" ? res.status(400).json({"message": "Empty response"}) : saveFoundData(req, res, mappedData);
     } catch (error) {
         res.status(404).json(error);
     }
@@ -64,9 +63,17 @@ const retrieveOpenData = async (
 
 const saveFoundData = async (
     req : Request,
-    res: Response
+    res: Response,
+    data: any
 ) =>{
-    const dataToSave = req.params.data;
+    try {
+        data.map((all: any) =>{
+            const { year, department, name, description, sector, product, email } = all;
+            dataModel.saveDataResults({ year, department, name, description, sector, product, email })
+        });
+    } catch (error) {
+        res.status(404).json({ error });
+    }
 }
 
 export {

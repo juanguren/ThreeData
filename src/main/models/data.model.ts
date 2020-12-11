@@ -7,7 +7,7 @@ const pool = new Pool(connectionPool);
 
 const saveDataResults = (params: validDataResult) =>{
     const array = Object.values(params);
-    pool.query(`INSERT INTO data_request
+    return pool.query(`INSERT INTO data_request
      VALUES (year, department, name, description, sector, product, email)
      VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
      array

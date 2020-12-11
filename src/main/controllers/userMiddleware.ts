@@ -15,8 +15,8 @@ const retrieveUsers = async (_req : Request, res: Response) =>{
 }
 
 const createUser = async (req : Request, res: Response) =>{
+    const { age, email, name, username, isLogged } = req.body;
     try {
-        const { age, email, name, username, isLogged } = req.body;
         await userModel.createUser({ age, email, name, username, isLogged  });
         
         res.status(200).json({
@@ -24,7 +24,7 @@ const createUser = async (req : Request, res: Response) =>{
             name
         })
     } catch (error) {
-        res.status(400).json({error: 'Incorrect field, probably'});
+        res.status(400).json({error: 'Incorrect / Missing field.'});
     }
 }
 

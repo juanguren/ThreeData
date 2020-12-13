@@ -67,12 +67,13 @@ const saveFoundData = async (
     data: any
 ) =>{
     try {
-        data.map((all: any) =>{
-            const { year, department, name, description, sector, product, email } = all;
+        data.map((fields: any) =>{
+            const { year, department, name, description, sector, product, email } = fields;
             dataModel.saveDataResults({ year, department, name, description, sector, product, email })
         });
+        res.status(201).json({message: "Row created succesfully"});
     } catch (error) {
-        res.status(404).json({ error });
+        res.status(404).json({ message: "Error uploading information", error });
     }
 }
 

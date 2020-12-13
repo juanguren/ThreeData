@@ -1,11 +1,4 @@
-// https://sendgrid.com/docs/API_Reference/api_getting_started.html
 
-/** Data:
- * - https://datos.gov.co/browse?sortBy=newest&utf8=%E2%9C%93
- * TIC:
- * - https://dev.socrata.com/foundry/www.datos.gov.co/e4mc-qr8v
- * - https://dev.socrata.com/foundry/www.datos.gov.co/4j4m-r8ri
- */
 import { Pool, QueryResult } from "pg";
 import { Request, Response, NextFunction } from 'express';
 import connectionPool from '../../pg_init';
@@ -98,7 +91,7 @@ const sendMessageWithData  = async (
     res: Response,
     next: NextFunction
 ) => {
-    
+    // https://github.com/sendgrid/sendgrid-nodejs/tree/main/packages/mail
 }
 
 export {

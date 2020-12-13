@@ -77,8 +77,33 @@ const saveFoundData = async (
     }
 }
 
+const retrieveSavedData  = async (
+    req : Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const dataResult = await dataModel.retrieveData();
+        if (dataResult.rows[0]) {
+            req.params.dataToSend = dataResult.rows[0];
+            next();
+        }
+    } catch (error) {
+        res.status(404).json({message: "No data was found", error});
+    }
+}
+
+const sendMessageWithData  = async (
+    req : Request,
+    res: Response,
+    next: NextFunction
+) => {
+    
+}
+
 export {
     retrieveOpenData,
     saveFoundData,
-    validateParams
+    validateParams,
+    retrieveSavedData
 }

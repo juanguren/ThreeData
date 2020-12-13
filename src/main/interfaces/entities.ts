@@ -1,5 +1,5 @@
 
-export interface validResult {
+export interface validDataResult {
     year: Number;
     department: String;
     name: String;

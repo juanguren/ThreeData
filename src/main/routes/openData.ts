@@ -4,7 +4,8 @@ import {
     retrieveOpenData,
     saveFoundData,
     validateParams,
-    retrieveSavedData
+    retrieveSavedData,
+    sendMessageWithData
 } from '../controllers/openMiddlewares';
 
 const dataRouter = Router();
@@ -18,6 +19,10 @@ dataRouter.post("/getData",
 
 dataRouter.post("/sendData",
     retrieveSavedData
+);
+
+dataRouter.post("testMsg", 
+    sendMessageWithData
 );
 
 export default dataRouter;

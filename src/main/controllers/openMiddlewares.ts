@@ -1,20 +1,11 @@
-// https://sendgrid.com/docs/API_Reference/api_getting_started.html
 
-/** Data:
- * - https://datos.gov.co/browse?sortBy=newest&utf8=%E2%9C%93
- * TIC:
- * - https://dev.socrata.com/foundry/www.datos.gov.co/e4mc-qr8v
- * - https://dev.socrata.com/foundry/www.datos.gov.co/4j4m-r8ri
- */
-import { Pool, QueryResult } from "pg";
 import { Request, Response, NextFunction } from 'express';
 import connectionPool from '../../pg_init';
 import axios, { AxiosResponse } from 'axios';
 import { validDataResult } from '../interfaces/entities';
 import dataModel from '../models/data.model';
-
-const pool = new Pool(connectionPool);
-const { APP_TOKEN } = process.env;
+import sendGrid from '@sendgrid/mail';
+import messageString from '../view/messageTemplate';
 
 const validateParams = async (
     req : Request,
@@ -35,6 +26,7 @@ const retrieveOpenData = async (
     next : NextFunction
 ) =>{
     try {
+        const { APP_TOKEN } = process.env;
         const { año: year, departamento: dpto } = req.body;
         
         const request : AxiosResponse = await axios.get(
@@ -55,7 +47,9 @@ const retrieveOpenData = async (
                 year: all.a_o
             }
         });
-        finalData == "" ? res.status(400).json({"message": "Empty response"}) : saveFoundData(req, res, mappedData);
+        finalData == ""
+         ? res.status(400).json({"message": "Empty response"})
+         : saveFoundData(req, res, mappedData);
     } catch (error) {
         res.status(404).json(error);
     }
@@ -77,8 +71,61 @@ const saveFoundData = async (
     }
 }
 
+const retrieveSavedData  = async (
+    req : Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const dataResult = await dataModel.retrieveData();
+        if (dataResult.rows[0]) {
+            req.params.dataToSend = dataResult.rows[0];
+            next();
+        }
+    } catch (error) {
+        res.status(404).json({message: "No data was found", error});
+    }
+}
+
+const sendMessageWithData  = (
+    req : Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const sendGridAPI : string = process.env.SEND_API!;
+    sendGrid.setApiKey(sendGridAPI);
+    const messageBody : any = req.body;
+    messageBody.html = messageString;
+    const { to: recipient } = messageBody;
+    try {
+        if (messageBody) {
+            (async () => {
+                try {
+                  const messageResponse = await sendGrid.send(messageBody);
+                  const code = messageResponse[0].statusCode;
+                  code === 202 
+                    ? res.status(code).json({Message: `Email succesfully sent to *${recipient}*`})
+                    : res.status(404).json({Error: "Message failed"});
+                } catch (error) {
+                  console.error(error);
+                  if (error.response) {
+                    const error_message = error.response.body.errors;
+                    return res.status(error.code).json(error_message);
+                  }
+                }
+            })();
+        } else{
+            res.status(422).json({Message: "Unprocessable payload. Please check all values are complete"});
+        }
+    } catch (error) {
+        res.status(500).json(error);
+    }
+}
+
 export {
     retrieveOpenData,
     saveFoundData,
-    validateParams
+    validateParams,
+    retrieveSavedData,
+    sendMessageWithData
 }

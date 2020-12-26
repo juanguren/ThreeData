@@ -86,7 +86,7 @@ const retrieveSavedData  = async (
     }
 }
 
-const sendMessageWithData  = async (
+const sendMessageWithData  = (
     req : Request,
     res: Response,
     next: NextFunction

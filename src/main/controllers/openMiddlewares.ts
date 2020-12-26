@@ -5,6 +5,7 @@ import axios, { AxiosResponse } from 'axios';
 import { validDataResult } from '../interfaces/entities';
 import dataModel from '../models/data.model';
 import sendGrid from '@sendgrid/mail';
+import messageString from '../view/messageTemplate';
 
 const validateParams = async (
     req : Request,
@@ -93,7 +94,8 @@ const sendMessageWithData  = (
 ) => {
     const sendGridAPI : string = process.env.SEND_API!;
     sendGrid.setApiKey(sendGridAPI);
-    const messageBody = req.body;
+    const messageBody : any = req.body;
+    messageBody.html = messageString;
     const { to: recipient } = messageBody;
     try {
         if (messageBody) {
@@ -102,20 +104,19 @@ const sendMessageWithData  = (
                   const messageResponse = await sendGrid.send(messageBody);
                   const code = messageResponse[0].statusCode;
                   code === 202 
-                    ? res.status(code).json({Message: `Email sent succesfully to *${recipient}*`})
+                    ? res.status(code).json({Message: `Email succesfully sent to *${recipient}*`})
                     : res.status(404).json({Error: "Message failed"});
                 } catch (error) {
                   console.error(error);
                   if (error.response) {
-                    const error_message = error.response.body.errors[0].message;
-                    res.status(error.code).json(error_message);
+                    const error_message = error.response.body.errors;
+                    return res.status(error.code).json(error_message);
                   }
                 }
             })();
         } else{
             res.status(422).json({Message: "Unprocessable payload. Please check all values are complete"});
         }
-        // https://github.com/sendgrid/sendgrid-nodejs/tree/main/packages/mail
     } catch (error) {
         res.status(500).json(error);
     }

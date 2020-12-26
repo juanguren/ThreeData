@@ -5,9 +5,9 @@ import connectionPool from '../../pg_init';
 import axios, { AxiosResponse } from 'axios';
 import { validDataResult } from '../interfaces/entities';
 import dataModel from '../models/data.model';
+import sendGrid from '@sendgrid/mail';
 
 const pool = new Pool(connectionPool);
-const { APP_TOKEN } = process.env;
 
 const validateParams = async (
     req : Request,
@@ -28,6 +28,7 @@ const retrieveOpenData = async (
     next : NextFunction
 ) =>{
     try {
+        const { APP_TOKEN } = process.env;
         const { año: year, departamento: dpto } = req.body;
         
         const request : AxiosResponse = await axios.get(
@@ -91,12 +92,40 @@ const sendMessageWithData  = async (
     res: Response,
     next: NextFunction
 ) => {
-    // https://github.com/sendgrid/sendgrid-nodejs/tree/main/packages/mail
+    const sendGridAPI : string = process.env.SEND_API!;
+    sendGrid.setApiKey(sendGridAPI);
+    const messageBody = req.body;
+    const { to: recipient } = messageBody;
+    try {
+        if (messageBody) {
+            (async () => {
+                try {
+                  const messageResponse = await sendGrid.send(messageBody);
+                  const code = messageResponse[0].statusCode;
+                  code === 202 
+                    ? res.status(code).json({Message: `Email sent succesfully to *${recipient}*`})
+                    : res.status(404).json({Error: "Message failed"});
+                } catch (error) {
+                  console.error(error);
+                  if (error.response) {
+                    const error_message = error.response.body.errors[0].message;
+                    res.status(error.code).json(error_message);
+                  }
+                }
+            })();
+        } else{
+            res.status(422).json({Message: "Unprocessable payload. Please check all values are complete"});
+        }
+        // https://github.com/sendgrid/sendgrid-nodejs/tree/main/packages/mail
+    } catch (error) {
+        res.status(500).json(error);
+    }
 }
 
 export {
     retrieveOpenData,
     saveFoundData,
     validateParams,
-    retrieveSavedData
+    retrieveSavedData,
+    sendMessageWithData
 }

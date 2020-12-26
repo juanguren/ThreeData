@@ -21,7 +21,7 @@ dataRouter.post("/sendData",
     retrieveSavedData
 );
 
-dataRouter.post("testMsg", 
+dataRouter.post("/testMsg", 
     sendMessageWithData
 );
 

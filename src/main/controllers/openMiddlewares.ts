@@ -1,13 +1,10 @@
 
-import { Pool, QueryResult } from "pg";
 import { Request, Response, NextFunction } from 'express';
 import connectionPool from '../../pg_init';
 import axios, { AxiosResponse } from 'axios';
 import { validDataResult } from '../interfaces/entities';
 import dataModel from '../models/data.model';
 import sendGrid from '@sendgrid/mail';
-
-const pool = new Pool(connectionPool);
 
 const validateParams = async (
     req : Request,
@@ -49,7 +46,9 @@ const retrieveOpenData = async (
                 year: all.a_o
             }
         });
-        finalData == "" ? res.status(400).json({"message": "Empty response"}) : saveFoundData(req, res, mappedData);
+        finalData == ""
+         ? res.status(400).json({"message": "Empty response"})
+         : saveFoundData(req, res, mappedData);
     } catch (error) {
         res.status(404).json(error);
     }

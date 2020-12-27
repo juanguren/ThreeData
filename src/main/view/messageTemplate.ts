@@ -12,7 +12,7 @@ const constructMessageLayout = (payload : any) => {
         <title>Document</title>
     </head>
     <body>
-        <h2>Company:${name}</h2>
+        <h2>Company: ${name}</h2>
         <p>${description}</p>
         <ul> 
             <li><b>Product:</b> ${product}</li>

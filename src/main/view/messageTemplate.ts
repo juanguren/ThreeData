@@ -1,5 +1,8 @@
 
-const messageString = 
+const constructMessageLayout = (payload : any) => {
+    const { department, description, email, name, product, sector, year } = payload;
+
+    const messageString = 
     `<!DOCTYPE html>
     <html lang="en">
     <head>
@@ -9,10 +12,20 @@ const messageString =
         <title>Document</title>
     </head>
     <body>
-        <h2>HEY!</h2>
-        <p>This a test message. I thus validate SendGrid's API.</p>
+        <h2>Company:${name}</h2>
+        <p>${description}</p>
+        <ul> 
+            <li><b>Product:</b> ${product}</li>
+            <li><b>Sector:</b> ${sector}</li>
+            <li><b>Year:</b> ${year}</li>
+            <li><b>Department:</b> ${department}</li>
+            <li><b>Email:</b> ${email}</li>
+        </ul>
     </body>
-    </html>`
-;
+    </html>`;
+    return messageString;
+}
 
-export default messageString;
+export {
+    constructMessageLayout
+};

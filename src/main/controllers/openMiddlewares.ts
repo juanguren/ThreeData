@@ -5,7 +5,9 @@ import axios, { AxiosResponse } from 'axios';
 import { validDataResult } from '../interfaces/entities';
 import dataModel from '../models/data.model';
 import sendGrid from '@sendgrid/mail';
-import messageString from '../view/messageTemplate';
+import {
+    constructMessageLayout
+} from '../view/messageTemplate';
 
 const validateParams = async (
     req : Request,
@@ -92,19 +94,24 @@ const sendMessageWithData  = (
     res: Response,
     next: NextFunction
 ) => {
+    const { PERSONAL_EMAIL, EDU_EMAIL } = process.env;
     const sendGridAPI : string = process.env.SEND_API!;
     sendGrid.setApiKey(sendGridAPI);
-    const messageBody : any = req.body;
-    messageBody.html = messageString;
-    const { to: recipient } = messageBody;
+    const messageBody : any = {
+        "to": PERSONAL_EMAIL,
+        "from": EDU_EMAIL,
+        "subject": "HEY!"
+    }
+    const messageLayout = constructMessageLayout(req.body);
+    messageBody.html = messageLayout;
     try {
-        if (messageBody) {
+        if (req.body) {
             (async () => {
                 try {
                   const messageResponse = await sendGrid.send(messageBody);
                   const code = messageResponse[0].statusCode;
                   code === 202 
-                    ? res.status(code).json({Message: `Email succesfully sent to *${recipient}*`})
+                    ? res.status(code).json({Message: `Email succesfully sent to *${messageBody.to}*`})
                     : res.status(404).json({Error: "Message failed"});
                 } catch (error) {
                   console.error(error);

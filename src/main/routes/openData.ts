@@ -2,9 +2,7 @@
 import { Router, json } from 'express';
 import {
     retrieveOpenData,
-    saveFoundData,
     validateParams,
-    retrieveSavedData,
     sendMessageWithData
 } from '../controllers/openMiddlewares';
 
@@ -13,15 +11,10 @@ dataRouter.use(json());
 
 dataRouter.post("/getData", 
     validateParams,
-    retrieveOpenData,
-    saveFoundData
+    retrieveOpenData
 );
 
 dataRouter.post("/sendData",
-    retrieveSavedData
-);
-
-dataRouter.post("/testMsg", 
     sendMessageWithData
 );
 

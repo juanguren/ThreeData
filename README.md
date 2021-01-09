@@ -1,5 +1,5 @@
 # Typescript Open Data
-Typescript + PostgresDB API
+Typescript + Express.js + PostgresDB API
 <br>
 
 This API queries the official open data repository of the Colombian government (JSON format).

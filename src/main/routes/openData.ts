@@ -8,7 +8,7 @@ import {
 const dataRouter = Router();
 dataRouter.use(json());
 
-dataRouter.post("/getData", validateParams, retrieveOpenData);
-dataRouter.post("/sendData", sendMessageWithData);
+dataRouter.get("/data", validateParams, retrieveOpenData);
+dataRouter.post("/data", sendMessageWithData);
 
 export default dataRouter;

@@ -9,7 +9,7 @@ app.get("/", (_req: Request, res: Response) => {
   res.status(200).json({ msg: "HEY", date: moment(new Date()) });
 });
 
-app.use("/data", dataRouter);
+app.use("/", dataRouter);
 
 app.listen(PORT, () => {
   console.log("Listening in port " + PORT);

@@ -46,7 +46,7 @@ const retrieveOpenData = async (req: Request, res: Response) => {
           year: all.a_o,
         };
       });
-    response == ""
+    response === ""
       ? res.status(400).json({ message: "Empty response" })
       : res.status(200).json(arrangedData);
   } catch (error) {
@@ -59,12 +59,12 @@ const sendMessageWithData = (
   res: Response,
   next: NextFunction
 ) => {
-  const { PERSONAL_EMAIL, EDU_EMAIL } = process.env;
+  const { PERSONAL_EMAIL } = process.env;
   const sendGridAPI: string = process.env.SEND_API!;
   sendGrid.setApiKey(sendGridAPI);
   const messageBody: any = {
     to: PERSONAL_EMAIL,
-    from: EDU_EMAIL,
+    from: "juanararo@unisabana.edu.co",
     subject: "HEY!",
   };
   const messageLayout = constructMessageLayout(req.body);

@@ -32,8 +32,8 @@ const retrieveOpenData = async (req: Request, res: Response) => {
         },
       }
     );
-    const finalData = request.data;
-    const mappedData = finalData
+    const response = request.data;
+    const arrangedData = response
       .slice(0, limit ? limit : defaultLimit)
       .map((all: any): validDataResult => {
         return {
@@ -46,9 +46,9 @@ const retrieveOpenData = async (req: Request, res: Response) => {
           year: all.a_o,
         };
       });
-    finalData == ""
+    response == ""
       ? res.status(400).json({ message: "Empty response" })
-      : res.status(200).json(mappedData);
+      : res.status(200).json(arrangedData);
   } catch (error) {
     res.status(404).json(error);
   }

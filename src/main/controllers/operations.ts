@@ -19,38 +19,33 @@ const validateParams = async (
     : res.status(422).json({ message: "Error, missing param", validParams });
 };
 
-const retrieveOpenData = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const retrieveOpenData = async (req: Request, res: Response) => {
+  let defaultLimit = 3;
   try {
     const { APP_TOKEN } = process.env;
-    const { año: year, departamento: dpto } = req.body;
-    const request: AxiosResponse = await axios
-      .get(
-        `https://www.datos.gov.co/resource/rggv-qcwf.json?a_o=${year}&departamento=${dpto}`,
-        {
-          headers: {
-            "X-App-Token": APP_TOKEN,
-          },
-        }
-      )
-      .catch((error) => {
-        throw Error(error);
-      });
+    const { año: year, departamento: dpto, limit } = req.body;
+    const request: AxiosResponse = await axios.get(
+      `https://www.datos.gov.co/resource/rggv-qcwf.json?a_o=${year}&departamento=${dpto}`,
+      {
+        headers: {
+          "X-App-Token": APP_TOKEN,
+        },
+      }
+    );
     const finalData = request.data;
-    const mappedData = finalData.map((all: any): validDataResult => {
-      return {
-        department: all.departamento,
-        description: all.descripci_n,
-        email: all.correo_electronico,
-        name: all.raz_n_social,
-        product: all.producto_principal,
-        sector: all.sector,
-        year: all.a_o,
-      };
-    });
+    const mappedData = finalData
+      .slice(0, limit ? limit : defaultLimit)
+      .map((all: any): validDataResult => {
+        return {
+          department: all.departamento,
+          description: all.descripci_n,
+          email: all.correo_electronico,
+          name: all.raz_n_social,
+          product: all.producto_principal,
+          sector: all.sector,
+          year: all.a_o,
+        };
+      });
     finalData == ""
       ? res.status(400).json({ message: "Empty response" })
       : res.status(200).json(mappedData);

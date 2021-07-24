@@ -8,7 +8,7 @@ import {
 const userRouter = Router();
 userRouter.use(json());
 
-userRouter.get("/", getUser);
+userRouter.get("/:username", getUser);
 userRouter.post("/", validateUserData, createNewUser);
 
 export default userRouter;

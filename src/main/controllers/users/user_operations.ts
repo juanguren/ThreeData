@@ -8,14 +8,27 @@ const validateUserData = (req: Request, res: Response, next: NextFunction) => {
     if (checkForValidEmail(email)) {
       next();
     } else {
-      res.status(400).json({ error: "Please check the email!", email });
+      res
+        .status(400)
+        .json({ error: "Please check the provided email!", email });
     }
   } else {
-    res.status(400).json({ error: "Please check the user values!" });
+    res.status(400).json({ error: "Please check the provided user values!" });
   }
 };
 
-const getUser = (req: Request, res: Response) => {};
+const getUser = async (req: Request, res: Response) => {
+  const { username } = req.params;
+  try {
+    const foundUser = await UserService.getUser(username);
+    if (foundUser) return res.status(200).json({ data: foundUser });
+    return res.status(404).json({ message: "User not found", username });
+  } catch (error) {
+    return res
+      .status(400)
+      .json({ message: "Error retrieving user data", error });
+  }
+};
 
 const createNewUser = async (req: Request, res: Response) => {
   const user = req.body;

@@ -14,7 +14,7 @@ app.get("/", (_req: Request, res: Response) => {
 app.use("/data", dataRouter);
 app.use("/user", userRouter);
 
-//databaseConnection(); // connect to DB
+databaseConnection(); // connect to DB
 
 app.listen(PORT, () => {
   console.log("Listening in port " + PORT);

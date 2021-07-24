@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import axios, { AxiosResponse } from "axios";
-import { validDataResult } from "../interfaces/entities";
+import { validDataResult } from "../../interfaces/entities";
 import sendGrid from "@sendgrid/mail";
-import { constructMessageLayout } from "../view/messageTemplate";
+import { constructMessageLayout } from "../../view/messageTemplate";
 import dotenv from "dotenv";
 
 dotenv.config();

@@ -36,7 +36,7 @@ const createNewUser = async (req: Request, res: Response) => {
   try {
     const serverResponse = await UserService.createUser(user, username);
     if (serverResponse.username)
-      return res.status(200).json({ message: `User ${username} created` });
+      return res.status(201).json({ message: `User ${username} created` });
   } catch (error) {
     res.status(400).json({ message: "Error creating user", error });
   }

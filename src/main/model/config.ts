@@ -1,8 +1,11 @@
 import Mongoose from "mongoose";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const databaseConnection = async () => {
-  const URI =
-    "mongodb+srv://juanguren:2lVHfTsdRZ490wtD@cluster0.3u8p3.mongodb.net/three_data?retryWrites=true&w=majority";
+  const { DB_PASSWORD } = process.env;
+  const URI = `mongodb+srv://juanguren:${DB_PASSWORD}@cluster0.3u8p3.mongodb.net/three_data?retryWrites=true&w=majority`;
 
   Mongoose.connect(URI, {
     useNewUrlParser: true,

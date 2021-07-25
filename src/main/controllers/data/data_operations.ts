@@ -3,20 +3,37 @@ import axios, { AxiosResponse } from "axios";
 import { validDataResult } from "../../interfaces/entities";
 import sendGrid from "@sendgrid/mail";
 import { constructMessageLayout } from "../../view/messageTemplate";
+import UserService from "../../model/schemas/Users/users.static";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-const validateParams = async (
+const validateDataPackage = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const { año, departamento } = req.body;
-  const validParams = ["año", "departamento"];
-  año && departamento
+  const { year, department } = req.body.data_package;
+  const validParams = ["year", "department"];
+  year && department
     ? next()
     : res.status(422).json({ message: "Error, missing param", validParams });
+};
+
+const validateRecipient = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { username } = req.body.recipient;
+  try {
+    const foundUser = await UserService.getUser(username);
+    if (foundUser.username) next();
+  } catch (error) {
+    res
+      .status(422)
+      .json({ message: "Please check the username", username, error });
+  }
 };
 
 const retrieveOpenData = async (req: Request, res: Response) => {
@@ -54,11 +71,7 @@ const retrieveOpenData = async (req: Request, res: Response) => {
   }
 };
 
-const sendMessageWithData = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const sendMessageWithData = (req: Request, res: Response) => {
   const { PERSONAL_EMAIL } = process.env;
   const sendGridAPI: string = process.env.SEND_API!;
   sendGrid.setApiKey(sendGridAPI);
@@ -98,4 +111,9 @@ const sendMessageWithData = (
   }
 };
 
-export { retrieveOpenData, validateParams, sendMessageWithData };
+export {
+  retrieveOpenData,
+  validateDataPackage,
+  sendMessageWithData,
+  validateRecipient,
+};

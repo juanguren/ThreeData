@@ -20,4 +20,12 @@ const getUser = async (username: string): Promise<any> => {
   }
 };
 
-export default { createUser, getUser };
+const deleteUser = async (username: string): Promise<any> => {
+  try {
+    return await UserSchema.findOneAndDelete({ username: username });
+  } catch (error) {
+    return error;
+  }
+};
+
+export default { createUser, getUser, deleteUser };

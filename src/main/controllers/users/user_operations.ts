@@ -42,4 +42,14 @@ const createNewUser = async (req: Request, res: Response) => {
   }
 };
 
-export { getUser, createNewUser, validateUserData };
+const deleteUser = async (req: Request, res: Response) => {
+  const { username } = req.params;
+  try {
+    await UserService.deleteUser(username);
+    return res.status(204);
+  } catch (error) {
+    return res.status(400).json({ message: "Error deleting user", error });
+  }
+};
+
+export { getUser, createNewUser, validateUserData, deleteUser };

@@ -1,9 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import axios, { AxiosResponse } from "axios";
-import { validDataResult } from "../../interfaces/entities";
 import sendGrid from "@sendgrid/mail";
 import { constructMessageLayout } from "../../view/messageTemplate";
 import UserService from "../../model/schemas/Users/users.static";
+import retrieveOpenData from "../../services/open_data";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -28,7 +27,7 @@ const validateRecipient = async (
   const { username } = req.body.recipient;
   try {
     const foundUser = await UserService.getUser(username);
-    if (foundUser.username) next();
+    if (foundUser.username) executeOperation(req, res, foundUser);
   } catch (error) {
     res
       .status(422)
@@ -36,84 +35,41 @@ const validateRecipient = async (
   }
 };
 
-const retrieveOpenData = async (req: Request, res: Response) => {
-  let defaultLimit = 3;
+const executeOperation = async (req: Request, res: Response, userData: any) => {
+  const { year, department, limit } = req.body.data_package;
+  const { APP_TOKEN } = process.env;
   try {
-    const { APP_TOKEN } = process.env;
-    const { año: year, departamento: dpto, limit } = req.body;
-    const request: AxiosResponse = await axios.get(
-      `https://www.datos.gov.co/resource/rggv-qcwf.json?a_o=${year}&departamento=${dpto}`,
-      {
-        headers: {
-          "X-App-Token": APP_TOKEN,
-        },
-      }
+    const dataToSend = await retrieveOpenData(
+      year,
+      department,
+      APP_TOKEN,
+      limit
     );
-    const response = request.data;
-    const arrangedData = response
-      .slice(0, limit ? limit : defaultLimit)
-      .map((all: any): validDataResult => {
-        return {
-          department: all.departamento,
-          description: all.descripci_n,
-          email: all.correo_electronico,
-          name: all.raz_n_social,
-          product: all.producto_principal,
-          sector: all.sector,
-          year: all.a_o,
-        };
-      });
-    response === ""
-      ? res.status(400).json({ message: "Empty response" })
-      : res.status(200).json(arrangedData);
   } catch (error) {
-    res.status(404).json(error);
+    res.status(400).json({ error });
   }
 };
 
-const sendMessageWithData = (req: Request, res: Response) => {
-  const { PERSONAL_EMAIL } = process.env;
+const sendMessageWithData = (userData: any, openData: Array<object>) => {
+  const { email } = userData;
   const sendGridAPI: string = process.env.SEND_API!;
-  sendGrid.setApiKey(sendGridAPI);
-  const messageBody: any = {
-    to: PERSONAL_EMAIL,
-    from: "juanararo@unisabana.edu.co",
-    subject: "HEY!",
-  };
-  const messageLayout = constructMessageLayout(req.body);
-  messageBody.html = messageLayout;
   try {
-    if (req.body) {
-      (async () => {
-        try {
-          const messageResponse = await sendGrid.send(messageBody);
-          const code = messageResponse[0].statusCode;
-          code === 202
-            ? res.status(code).json({
-                Message: `Email succesfully sent to *${messageBody.to}*`,
-              })
-            : res.status(404).json({ Error: "Message failed" });
-        } catch (error) {
-          console.error(error);
-          if (error.response) {
-            const error_message = error.response.body.errors;
-            return res.status(error.code).json(error_message);
-          }
-        }
-      })();
-    } else {
-      res.status(422).json({
-        Message: "Unprocessable payload. Please check all values are complete",
-      });
-    }
-  } catch (error) {
-    res.status(500).json(error);
-  }
+    sendGrid.setApiKey(sendGridAPI);
+    const messageBody: any = {
+      to: email,
+      from: "juanararo@unisabana.edu.co",
+      subject: "HEY!",
+    };
+    const messageLayout = constructMessageLayout(openData, userData);
+    messageBody.html = messageLayout;
+
+    (async () => {
+      try {
+        const messageResponse = await sendGrid.send(messageBody);
+        const code = messageResponse[0].statusCode;
+      } catch (error) {}
+    })();
+  } catch (error) {}
 };
 
-export {
-  retrieveOpenData,
-  validateDataPackage,
-  sendMessageWithData,
-  validateRecipient,
-};
+export { validateDataPackage, sendMessageWithData, validateRecipient };

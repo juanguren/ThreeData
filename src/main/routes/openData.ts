@@ -1,6 +1,5 @@
 import { Router, json } from "express";
 import {
-  retrieveOpenData,
   validateDataPackage,
   sendMessageWithData,
   validateRecipient,
@@ -9,11 +8,6 @@ import {
 const dataRouter = Router();
 dataRouter.use(json());
 
-dataRouter.post(
-  "/send",
-  validateDataPackage,
-  validateRecipient,
-  retrieveOpenData
-);
+dataRouter.post("/send", validateDataPackage, validateRecipient);
 
 export default dataRouter;

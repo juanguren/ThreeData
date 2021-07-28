@@ -45,12 +45,13 @@ const executeOperation = async (req: Request, res: Response, userData: any) => {
       APP_TOKEN,
       limit
     );
+    const sendMessage = await sendMessageWithData(userData, dataToSend);
   } catch (error) {
     res.status(400).json({ error });
   }
 };
 
-const sendMessageWithData = (userData: any, openData: Array<object>) => {
+const sendMessageWithData = async (userData: any, openData: Array<object>) => {
   const { email } = userData;
   const sendGridAPI: string = process.env.SEND_API!;
   try {
@@ -72,4 +73,4 @@ const sendMessageWithData = (userData: any, openData: Array<object>) => {
   } catch (error) {}
 };
 
-export { validateDataPackage, sendMessageWithData, validateRecipient };
+export { validateDataPackage, validateRecipient };

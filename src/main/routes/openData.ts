@@ -1,7 +1,6 @@
 import { Router, json } from "express";
 import {
   validateDataPackage,
-  sendMessageWithData,
   validateRecipient,
 } from "../controllers/data/data_operations";
 

@@ -3,6 +3,7 @@ import sendGrid from "@sendgrid/mail";
 import { constructMessageLayout } from "../../view/messageTemplate";
 import UserService from "../../model/schemas/Users/users.static";
 import retrieveOpenData from "../../services/open_data";
+import { IUser } from "../../model/schemas/Users/users.type";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -35,7 +36,11 @@ const validateRecipient = async (
   }
 };
 
-const executeOperation = async (req: Request, res: Response, userData: any) => {
+const executeOperation = async (
+  req: Request,
+  res: Response,
+  userData: IUser
+) => {
   const { year, department, limit } = req.body.data_package;
   const { APP_TOKEN } = process.env;
   try {

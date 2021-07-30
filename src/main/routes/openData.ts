@@ -1,14 +1,12 @@
 import { Router, json } from "express";
 import {
-  retrieveOpenData,
-  validateParams,
-  sendMessageWithData,
+  validateDataPackage,
+  validateRecipient,
 } from "../controllers/data/data_operations";
 
 const dataRouter = Router();
 dataRouter.use(json());
 
-dataRouter.get("/get", validateParams, retrieveOpenData);
-dataRouter.post("/send", sendMessageWithData);
+dataRouter.post("/send", validateDataPackage, validateRecipient);
 
 export default dataRouter;

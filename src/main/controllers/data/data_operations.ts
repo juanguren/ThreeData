@@ -1,6 +1,5 @@
-import { Request, Response, NextFunction } from "express";
-import sendGrid from "@sendgrid/mail";
-import { constructMessageLayout } from "../../view/messageTemplate";
+import { Request, Response, NextFunction, response } from "express";
+import sendMessageWithData from "../../services/sendgrid";
 import UserService from "../../model/schemas/Users/users.static";
 import retrieveOpenData from "../../services/open_data";
 import { IUser } from "../../model/schemas/Users/users.type";
@@ -20,11 +19,7 @@ const validateDataPackage = (
     : res.status(422).json({ message: "Error, missing param", validParams });
 };
 
-const validateRecipient = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const validateRecipient = async (req: Request, res: Response) => {
   const { username } = req.body.recipient;
   try {
     const foundUser = await UserService.getUser(username);
@@ -51,31 +46,11 @@ const executeOperation = async (
       limit
     );
     const sendMessage = await sendMessageWithData(userData, dataToSend);
+    const { status: code, message } = sendMessage;
+    res.status(code).json({ message });
   } catch (error) {
     res.status(400).json({ error });
   }
-};
-
-const sendMessageWithData = async (userData: any, openData: Array<object>) => {
-  const { email } = userData;
-  const sendGridAPI: string = process.env.SEND_API!;
-  try {
-    sendGrid.setApiKey(sendGridAPI);
-    const messageBody: any = {
-      to: email,
-      from: "juanararo@unisabana.edu.co",
-      subject: "HEY!",
-    };
-    const messageLayout = constructMessageLayout(openData, userData);
-    messageBody.html = messageLayout;
-
-    (async () => {
-      try {
-        const messageResponse = await sendGrid.send(messageBody);
-        const code = messageResponse[0].statusCode;
-      } catch (error) {}
-    })();
-  } catch (error) {}
 };
 
 export { validateDataPackage, validateRecipient };

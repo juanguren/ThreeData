@@ -28,4 +28,19 @@ const deleteUser = async (username: string): Promise<any> => {
   }
 };
 
-export default { createUser, getUser, deleteUser };
+const updateUserSearchCount = async (username: string) => {
+  try {
+    let updatedCount = 1;
+    const foundUser = await UserSchema.findOne({ username: username });
+    if (foundUser) updatedCount += foundUser.entryCount!;
+
+    return await UserSchema.findOneAndUpdate(
+      { username: username },
+      { entryCount: updatedCount }
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export default { createUser, getUser, deleteUser, updateUserSearchCount };

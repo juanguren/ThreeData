@@ -23,7 +23,7 @@ const validateRecipient = async (req: Request, res: Response) => {
   const { username } = req.body.recipient;
   try {
     const foundUser = await UserService.getUser(username);
-    if (foundUser.username) executeOperation(req, res, foundUser);
+    if (foundUser.username) executeOperation(req, res, foundUser, username);
   } catch (error) {
     res
       .status(422)
@@ -34,7 +34,8 @@ const validateRecipient = async (req: Request, res: Response) => {
 const executeOperation = async (
   req: Request,
   res: Response,
-  userData: IUser
+  userData: IUser,
+  username: string
 ) => {
   const { year, department, limit } = req.body.data_package;
   const { APP_TOKEN } = process.env;
@@ -47,6 +48,8 @@ const executeOperation = async (
     );
     const sendMessage = await sendMessageWithData(userData, dataToSend);
     const { status: code, message } = sendMessage;
+    if (code === 202) await UserService.updateUserSearchCount(username);
+
     res.status(code).json({ message });
   } catch (error) {
     res.status(400).json({ error });

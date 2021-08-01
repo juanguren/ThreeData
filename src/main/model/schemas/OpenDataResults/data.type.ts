@@ -4,5 +4,5 @@ export interface IData extends Document {
   sector: String;
   year: String;
   timestamp: Date;
-  queries: Array<object>;
+  user: Array<object>;
 }

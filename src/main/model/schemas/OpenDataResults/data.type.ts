@@ -1,8 +1,13 @@
 import { Document } from "mongoose";
 
 export interface IData extends Document {
-  sector: String;
-  year: String;
+  data: dataResult[];
   timestamp: Date;
-  user: Array<object>;
+}
+
+interface dataResult {
+  sector: String;
+  product: String;
+  name: String;
+  year: String;
 }

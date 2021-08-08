@@ -60,13 +60,14 @@ const executeOperation = async (
         timestamp,
         user: userId,
       };
-      const userCount = await UserService.updateUserSearchCount(username);
       const dataRecord = await DataService.saveDataRecords(dataRecordObject);
-      if (!userCount.entryCount || !dataRecord._id)
-        throw "Error performing database operation.";
+      if (dataRecord.id) {
+        const userCount = await UserService.updateUserSearchCount(username);
+        return res.status(code).json({ message });
+      } else {
+        throw "Error updating userCount.";
+      }
     }
-
-    res.status(code).json({ message });
   } catch (error) {
     res.status(400).json({ message: error });
   }

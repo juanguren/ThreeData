@@ -17,6 +17,7 @@ const retrieveOpenData = async (
       }
     );
     const response = request.data;
+    if (response.length === 0) throw "Empty Data response.";
     const arrangedData = response
       .slice(0, limit)
       .map((all: any): validDataResult => {

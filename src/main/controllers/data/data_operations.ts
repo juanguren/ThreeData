@@ -1,6 +1,8 @@
-import { Request, Response, NextFunction, response } from "express";
+import { Request, Response, NextFunction } from "express";
 import sendMessageWithData from "../../services/sendgrid";
 import UserService from "../../model/schemas/Users/users.static";
+import DataService from "../../model/schemas/OpenDataResults/data.static";
+import { organizeDataIntoRecords } from "../utils";
 import retrieveOpenData from "../../services/open_data";
 import { IUser } from "../../model/schemas/Users/users.type";
 import dotenv from "dotenv";
@@ -37,22 +39,36 @@ const executeOperation = async (
   userData: IUser,
   username: string
 ) => {
+  const { _id: userId } = userData;
   const { year, department, limit } = req.body.data_package;
   const { APP_TOKEN } = process.env;
   try {
-    const dataToSend = await retrieveOpenData(
+    const openDataResult = await retrieveOpenData(
       year,
       department,
       APP_TOKEN,
       limit
     );
-    const sendMessage = await sendMessageWithData(userData, dataToSend);
+    const sendMessage = await sendMessageWithData(userData, openDataResult);
     const { status: code, message } = sendMessage;
-    if (code === 202) await UserService.updateUserSearchCount(username);
+
+    if (code === 202) {
+      const timestamp = new Date();
+      const organizedData = organizeDataIntoRecords(openDataResult);
+      const dataRecordObject = {
+        data: organizedData,
+        timestamp,
+        user: userId,
+      };
+      const userCount = await UserService.updateUserSearchCount(username);
+      const dataRecord = await DataService.saveDataRecords(dataRecordObject);
+      if (!userCount.entryCount || !dataRecord._id)
+        throw "Error performing database operation.";
+    }
 
     res.status(code).json({ message });
   } catch (error) {
-    res.status(400).json({ error });
+    res.status(400).json({ message: error });
   }
 };
 

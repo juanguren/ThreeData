@@ -20,12 +20,10 @@ const validateDataPackage = (
     if (validDepartments.includes(department)) {
       next();
     } else {
-      return res
-        .status(422)
-        .json({
-          message: 'Please check the "department"',
-          received: department,
-        });
+      return res.status(422).json({
+        message: 'Please check the "department"',
+        received: department,
+      });
     }
   } else {
     return res
@@ -38,7 +36,8 @@ const validateRecipient = async (req: Request, res: Response) => {
   const { username } = req.body.recipient;
   try {
     const foundUser = await UserService.getUser(username);
-    if (foundUser.username) executeOperation(req, res, foundUser, username);
+    if (foundUser.username)
+      await executeOperation(req, res, foundUser, username);
   } catch (error) {
     res
       .status(422)

@@ -21,4 +21,40 @@ const organizeDataIntoRecords = (dataAPIResult: Array<any>) => {
   return organizedData;
 };
 
-export { checkForValidEmail, organizeDataIntoRecords };
+const validDepartments = [
+  "AMAZONAS",
+  "ANTIOQUIA",
+  "ARAUCA",
+  "ARCHIPIELAGO DE SAN ANDRES",
+  "ATLÁNTICO",
+  "BOGOTÁ D.C.",
+  "BOLIVAR",
+  "BOYACÁ",
+  "CALDAS",
+  "CAQUETA",
+  "CASANARE",
+  "CAUCA",
+  "CESAR",
+  "CHOCO",
+  "CORDOBA",
+  "CUNDINAMARCA",
+  "GUAINIA",
+  "GUAVIARE",
+  "HUILA",
+  "LA GUAJIRA",
+  "MAGDALENA",
+  "META",
+  "NARIÑO",
+  "NORTE DE SANTANDER",
+  "PUTUMAYO",
+  "QUINDIO",
+  "RISARALDA",
+  "SANTANDER",
+  "SUCRE",
+  "TOLIMA",
+  "VALLE DEL CAUCA",
+  "VAUPES",
+  "VICHADA",
+];
+
+export { checkForValidEmail, organizeDataIntoRecords, validDepartments };

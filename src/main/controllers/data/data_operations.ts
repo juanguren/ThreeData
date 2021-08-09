@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import sendMessageWithData from "../../services/sendgrid";
 import UserService from "../../model/schemas/Users/users.static";
 import DataService from "../../model/schemas/OpenDataResults/data.static";
-import { organizeDataIntoRecords } from "../utils";
+import { organizeDataIntoRecords, validDepartments } from "../utils";
 import retrieveOpenData from "../../services/open_data";
 import { IUser } from "../../model/schemas/Users/users.type";
 import dotenv from "dotenv";
@@ -16,9 +16,22 @@ const validateDataPackage = (
 ) => {
   const { year, department } = req.body.data_package;
   const validParams = ["year", "department"];
-  year && department
-    ? next()
-    : res.status(422).json({ message: "Error, missing param", validParams });
+  if (year && department) {
+    if (validDepartments.includes(department)) {
+      next();
+    } else {
+      return res
+        .status(422)
+        .json({
+          message: 'Please check the "department"',
+          received: department,
+        });
+    }
+  } else {
+    return res
+      .status(422)
+      .json({ message: "Error, missing param", validParams });
+  }
 };
 
 const validateRecipient = async (req: Request, res: Response) => {

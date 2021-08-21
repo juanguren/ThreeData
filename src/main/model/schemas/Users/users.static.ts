@@ -1,5 +1,5 @@
-import { IUser } from "./users.type";
-import UserSchema from "./users.model";
+import { IUser } from './users.type';
+import UserSchema from './users.model';
 
 const createUser = async (user: IUser, username: string): Promise<IUser> => {
   try {
@@ -43,4 +43,9 @@ const updateUserSearchCount = async (username: string) => {
   }
 };
 
-export default { createUser, getUser, deleteUser, updateUserSearchCount };
+export default {
+  createUser,
+  getUser,
+  deleteUser,
+  updateUserSearchCount,
+};

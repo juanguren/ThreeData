@@ -1,11 +1,11 @@
-import { Request, Response, NextFunction } from "express";
-import sendMessageWithData from "../../services/sendgrid";
-import UserService from "../../model/schemas/Users/users.static";
-import DataService from "../../model/schemas/OpenDataResults/data.static";
-import { organizeDataIntoRecords, validDepartments } from "../utils";
-import retrieveOpenData from "../../services/open_data";
-import { IUser } from "../../model/schemas/Users/users.type";
-import dotenv from "dotenv";
+import { Request, Response, NextFunction } from 'express';
+import sendMessageWithData from '../../services/sendgrid';
+import UserService from '../../model/schemas/Users/users.static';
+import DataService from '../../model/schemas/OpenDataResults/data.static';
+import { organizeDataIntoRecords, validDepartments } from '../utils';
+import retrieveOpenData from '../../services/open_data';
+import { IUser } from '../../model/schemas/Users/users.type';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -15,7 +15,7 @@ const validateDataPackage = (
   next: NextFunction
 ) => {
   const { year, department } = req.body.data_package;
-  const validParams = ["year", "department"];
+  const validParams = ['year', 'department'];
   if (year && department) {
     if (validDepartments.includes(department)) {
       next();
@@ -28,7 +28,7 @@ const validateDataPackage = (
   } else {
     return res
       .status(422)
-      .json({ message: "Error, missing param", validParams });
+      .json({ message: 'Error, missing param', validParams });
   }
 };
 
@@ -41,7 +41,7 @@ const validateRecipient = async (req: Request, res: Response) => {
   } catch (error) {
     res
       .status(422)
-      .json({ message: "Please check the username", username, error });
+      .json({ message: 'Please check the username', username, error });
   }
 };
 
@@ -72,12 +72,12 @@ const executeOperation = async (
         timestamp,
         user: userId,
       };
-      const dataRecord = await DataService.saveDataRecords(dataRecordObject);
+      const dataRecord = await DataService.saveDataRecord(dataRecordObject);
       if (dataRecord.id) {
-        const userCount = await UserService.updateUserSearchCount(username);
+        await UserService.updateUserSearchCount(username);
         return res.status(code).json({ message });
       } else {
-        throw "Error updating userCount.";
+        throw 'Error updating userCount.';
       }
     }
   } catch (error) {
@@ -85,4 +85,20 @@ const executeOperation = async (
   }
 };
 
-export { validateDataPackage, validateRecipient };
+const checkForUserQueries = async (req: Request, res: Response) => {
+  const { username } = req.params;
+  try {
+    const foundUser = await UserService.getUser(username);
+    if (foundUser) {
+      const { _id: userId } = foundUser;
+      const dataResult = await DataService.getQueries(userId);
+      res.status(200).json(dataResult);
+    } else {
+      res.status(404).json({ message: 'User not found', username });
+    }
+  } catch (error) {
+    res.status(400).json({ message: error });
+  }
+};
+
+export { validateDataPackage, validateRecipient, checkForUserQueries };

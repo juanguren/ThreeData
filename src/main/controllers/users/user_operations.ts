@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from "express";
-import { checkForValidEmail } from "../utils";
-import UserService from "../../model/schemas/Users/users.static";
+import { Request, Response, NextFunction } from 'express';
+import { checkForValidEmail } from '../utils';
+import UserService from '../../model/schemas/Users/users.static';
 
 const validateUserData = (req: Request, res: Response, next: NextFunction) => {
   const { first_name, last_name, email, username } = req.body;
@@ -10,10 +10,10 @@ const validateUserData = (req: Request, res: Response, next: NextFunction) => {
     } else {
       res
         .status(400)
-        .json({ error: "Please check the provided email!", email });
+        .json({ error: 'Please check the provided email!', email });
     }
   } else {
-    res.status(400).json({ error: "Please check the provided user values!" });
+    res.status(400).json({ error: 'Please check the provided user values!' });
   }
 };
 
@@ -22,11 +22,11 @@ const getUser = async (req: Request, res: Response) => {
   try {
     const foundUser = await UserService.getUser(username);
     if (foundUser) return res.status(200).json({ data: foundUser });
-    return res.status(404).json({ message: "User not found", username });
+    return res.status(404).json({ message: 'User not found', username });
   } catch (error) {
     return res
       .status(400)
-      .json({ message: "Error retrieving user data", error });
+      .json({ message: 'Error retrieving user data', error });
   }
 };
 
@@ -38,7 +38,7 @@ const createNewUser = async (req: Request, res: Response) => {
     if (serverResponse.username)
       return res.status(201).json({ message: `User ${username} created` });
   } catch (error) {
-    res.status(400).json({ message: "Error creating user", error });
+    res.status(400).json({ message: 'Error creating user', error });
   }
 };
 
@@ -48,7 +48,7 @@ const deleteUser = async (req: Request, res: Response) => {
     await UserService.deleteUser(username);
     return res.status(204).json();
   } catch (error) {
-    return res.status(400).json({ message: "Error deleting user", error });
+    return res.status(400).json({ message: 'Error deleting user', error });
   }
 };
 

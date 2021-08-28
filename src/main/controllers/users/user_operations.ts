@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { checkForValidEmail } from '../utils';
 import UserService from '../../model/schemas/Users/users.static';
+import { User } from '../../model/schemas/Users/users.static';
 
 const validateUserData = (req: Request, res: Response, next: NextFunction) => {
   const { first_name, last_name, email, username } = req.body;
@@ -31,11 +32,11 @@ const getUser = async (req: Request, res: Response) => {
 };
 
 const createNewUser = async (req: Request, res: Response) => {
-  const user = req.body;
-  const { username } = req.body;
+  const { first_name, last_name, email, username } = req.body;
   try {
-    const serverResponse = await UserService.createUser(user, username);
-    if (serverResponse.username)
+    const user = new User(first_name, last_name, email, username);
+    const userCreated = await user.save();
+    if (userCreated.username)
       return res.status(201).json({ message: `User ${username} created` });
   } catch (error) {
     res.status(400).json({ message: 'Error creating user', error });

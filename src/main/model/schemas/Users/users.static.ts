@@ -1,16 +1,9 @@
 import { IUser } from './users.type';
 import UserSchema from './users.model';
 
-const createUser = async (user: IUser, username: string): Promise<IUser> => {
-  try {
-    const userExists = await UserSchema.findOne({ username: username });
-    if (userExists) return userExists;
-
-    return await UserSchema.create(user);
-  } catch (error) {
-    return error;
-  }
-};
+/**
+ * Evaluate transforming the entire static file into an object managing CRUD actions
+ */
 
 const getUser = async (username: string): Promise<any> => {
   try {
@@ -43,8 +36,35 @@ const updateUserSearchCount = async (username: string) => {
   }
 };
 
+export class User {
+  constructor(
+    public first_name: string,
+    public last_name: string,
+    public email: string,
+    public username: string,
+    public entryCount?: number
+  ) {}
+
+  save = async (): Promise<IUser> => {
+    const userObject = {
+      first_name: this.first_name,
+      last_name: this.last_name,
+      email: this.email,
+      username: this.username,
+    };
+
+    try {
+      const userExists = await UserSchema.findOne({ username: this.username });
+      if (userExists) return userExists;
+
+      return await UserSchema.create(userObject);
+    } catch (error) {
+      return error;
+    }
+  };
+}
+
 export default {
-  createUser,
   getUser,
   deleteUser,
   updateUserSearchCount,

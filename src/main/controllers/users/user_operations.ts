@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { checkForValidEmail } from '../utils';
+import { checkForValidEmail, userNotFoundHandler } from '../utils';
 import UserService from '../../model/schemas/Users/users.static';
 import { User } from '../../model/schemas/Users/users.static';
 
@@ -23,7 +23,7 @@ const getUser = async (req: Request, res: Response) => {
   try {
     const foundUser = await UserService.getUser(username);
     if (foundUser) return res.status(200).json({ data: foundUser });
-    return res.status(404).json({ message: 'User not found', username });
+    return res.status(404).json(userNotFoundHandler(username));
   } catch (error) {
     return res
       .status(400)
@@ -35,7 +35,7 @@ const createNewUser = async (req: Request, res: Response) => {
   const { first_name, last_name, email, username } = req.body;
   try {
     const user = new User(first_name, last_name, email, username);
-    const userCreated = await user.save();
+    const userCreated = await user.save(req.body);
     if (userCreated.username)
       return res.status(201).json({ message: `User ${username} created` });
   } catch (error) {

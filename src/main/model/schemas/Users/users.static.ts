@@ -15,7 +15,8 @@ const getUser = async (username: string): Promise<any> => {
 
 const deleteUser = async (username: string): Promise<any> => {
   try {
-    return await UserSchema.findOneAndDelete({ username: username });
+    const foundUser = await UserSchema.findOneAndDelete({ username: username });
+    if (foundUser) return foundUser;
   } catch (error) {
     return error;
   }
@@ -45,19 +46,32 @@ export class User {
     public entryCount?: number
   ) {}
 
-  save = async (): Promise<IUser> => {
-    const userObject = {
-      first_name: this.first_name,
-      last_name: this.last_name,
-      email: this.email,
-      username: this.username,
-    };
-
+  private getUser = async (username: string): Promise<any> => {
     try {
-      const userExists = await UserSchema.findOne({ username: this.username });
-      if (userExists) return userExists;
+      return await UserSchema.findOne({ username: username });
+    } catch (error) {
+      return error;
+    }
+  };
 
+  save = async (userObject: any): Promise<IUser> => {
+    try {
+      const userExists = await this.getUser(this.username);
+      if (userExists) return userExists;
       return await UserSchema.create(userObject);
+    } catch (error) {
+      return error;
+    }
+  };
+
+  delete = async (username: string): Promise<any> => {
+    try {
+      const foundUser = await this.getUser(username);
+      const { _id } = foundUser;
+      const erasedUser = await UserSchema.findOneAndDelete({
+        _id,
+      });
+      if (erasedUser) return erasedUser;
     } catch (error) {
       return error;
     }

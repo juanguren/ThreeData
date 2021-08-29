@@ -1,4 +1,4 @@
-import { IData } from "../model/schemas/OpenDataResults/data.type";
+import { IData } from '../model/schemas/OpenDataResults/data.type';
 
 const checkForValidEmail = (email: string) => {
   const emailRegex = new RegExp(
@@ -21,40 +21,52 @@ const organizeDataIntoRecords = (dataAPIResult: Array<any>) => {
   return organizedData;
 };
 
+const userNotFoundHandler = (username: string) => {
+  return {
+    message: 'User not found',
+    username,
+  };
+};
+
 const validDepartments = [
-  "AMAZONAS",
-  "ANTIOQUIA",
-  "ARAUCA",
-  "ARCHIPIELAGO DE SAN ANDRES",
-  "ATLÁNTICO",
-  "BOGOTÁ D.C.",
-  "BOLIVAR",
-  "BOYACÁ",
-  "CALDAS",
-  "CAQUETA",
-  "CASANARE",
-  "CAUCA",
-  "CESAR",
-  "CHOCO",
-  "CORDOBA",
-  "CUNDINAMARCA",
-  "GUAINIA",
-  "GUAVIARE",
-  "HUILA",
-  "LA GUAJIRA",
-  "MAGDALENA",
-  "META",
-  "NARIÑO",
-  "NORTE DE SANTANDER",
-  "PUTUMAYO",
-  "QUINDIO",
-  "RISARALDA",
-  "SANTANDER",
-  "SUCRE",
-  "TOLIMA",
-  "VALLE DEL CAUCA",
-  "VAUPES",
-  "VICHADA",
+  'AMAZONAS',
+  'ANTIOQUIA',
+  'ARAUCA',
+  'ARCHIPIELAGO DE SAN ANDRES',
+  'ATLÁNTICO',
+  'BOGOTÁ D.C.',
+  'BOLIVAR',
+  'BOYACÁ',
+  'CALDAS',
+  'CAQUETA',
+  'CASANARE',
+  'CAUCA',
+  'CESAR',
+  'CHOCO',
+  'CORDOBA',
+  'CUNDINAMARCA',
+  'GUAINIA',
+  'GUAVIARE',
+  'HUILA',
+  'LA GUAJIRA',
+  'MAGDALENA',
+  'META',
+  'NARIÑO',
+  'NORTE DE SANTANDER',
+  'PUTUMAYO',
+  'QUINDIO',
+  'RISARALDA',
+  'SANTANDER',
+  'SUCRE',
+  'TOLIMA',
+  'VALLE DEL CAUCA',
+  'VAUPES',
+  'VICHADA',
 ];
 
-export { checkForValidEmail, organizeDataIntoRecords, validDepartments };
+export {
+  checkForValidEmail,
+  organizeDataIntoRecords,
+  userNotFoundHandler,
+  validDepartments,
+};

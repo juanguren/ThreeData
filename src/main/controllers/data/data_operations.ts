@@ -2,7 +2,11 @@ import { Request, Response, NextFunction } from 'express';
 import sendMessageWithData from '../../services/sendgrid';
 import UserService from '../../model/schemas/Users/users.static';
 import DataService from '../../model/schemas/OpenDataResults/data.static';
-import { organizeDataIntoRecords, validDepartments } from '../utils';
+import {
+  organizeDataIntoRecords,
+  validDepartments,
+  userNotFoundHandler,
+} from '../utils';
 import retrieveOpenData from '../../services/open_data';
 import { IUser } from '../../model/schemas/Users/users.type';
 import dotenv from 'dotenv';
@@ -94,7 +98,7 @@ const checkForUserQueries = async (req: Request, res: Response) => {
       const dataResult = await DataService.getQueries(userId);
       res.status(200).json(dataResult);
     } else {
-      res.status(404).json({ message: 'User not found', username });
+      res.status(404).json(userNotFoundHandler(username));
     }
   } catch (error) {
     res.status(400).json({ message: error });

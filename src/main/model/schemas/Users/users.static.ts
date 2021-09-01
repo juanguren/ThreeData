@@ -1,9 +1,5 @@
-import { IUser } from './users.type';
+import { IUser, UserClass } from './users.type';
 import UserSchema from './users.model';
-
-/**
- * Evaluate transforming the entire static file into an object managing CRUD actions
- */
 
 const getUser = async (username: string): Promise<any> => {
   try {
@@ -22,7 +18,9 @@ const deleteUser = async (username: string): Promise<any> => {
   }
 };
 
-const updateUserSearchCount = async (username: string) => {
+const updateUserSearchCount = async (
+  username: string
+): Promise<IUser | null> => {
   try {
     let updatedCount = 1;
     const foundUser = await UserSchema.findOne({ username: username });
@@ -37,7 +35,7 @@ const updateUserSearchCount = async (username: string) => {
   }
 };
 
-export class User {
+export class User implements UserClass {
   constructor(
     public first_name: string,
     public last_name: string,
@@ -59,19 +57,6 @@ export class User {
       const userExists = await this.getUser(this.username);
       if (userExists) return userExists;
       return await UserSchema.create(userObject);
-    } catch (error) {
-      return error;
-    }
-  };
-
-  delete = async (username: string): Promise<any> => {
-    try {
-      const foundUser = await this.getUser(username);
-      const { _id } = foundUser;
-      const erasedUser = await UserSchema.findOneAndDelete({
-        _id,
-      });
-      if (erasedUser) return erasedUser;
     } catch (error) {
       return error;
     }

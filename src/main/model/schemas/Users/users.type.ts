@@ -15,6 +15,4 @@ export interface UserClass {
   username: string;
   entryCount?: number;
   save(userobject: object): Promise<IUser>;
-  delete(username: string): Promise<any>;
-  updateSearchCount(username: string): Promise<IUser | null>;
 }

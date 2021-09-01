@@ -35,7 +35,7 @@ const createNewUser = async (req: Request, res: Response) => {
   const { first_name, last_name, email, username } = req.body;
   try {
     const user = new User(first_name, last_name, email, username);
-    const userCreated = await user.save(req.body);
+    const userCreated = await user.save();
     if (userCreated.username)
       return res.status(201).json({ message: `User ${username} created` });
   } catch (error) {

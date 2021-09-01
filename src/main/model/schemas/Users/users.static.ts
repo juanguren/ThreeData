@@ -35,6 +35,11 @@ const updateUserSearchCount = async (
   }
 };
 
+/**
+ * The class below served as a OOP learning opportunity. I realize it may not be very efficient to combine both
+ * functional and object-oriented programming in a single file.
+ */
+
 export class User implements UserClass {
   constructor(
     public first_name: string,
@@ -52,7 +57,14 @@ export class User implements UserClass {
     }
   };
 
-  save = async (userObject: any): Promise<IUser> => {
+  save = async (): Promise<IUser> => {
+    const userObject = {
+      first_name: this.first_name,
+      last_name: this.last_name,
+      email: this.email,
+      username: this.username,
+    };
+
     try {
       const userExists = await this.getUser(this.username);
       if (userExists) return userExists;

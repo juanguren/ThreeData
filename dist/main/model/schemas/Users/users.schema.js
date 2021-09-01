@@ -8,5 +8,6 @@ const UserSchema = new mongoose_1.Schema({
     email: { type: String, required: true },
     username: { type: String, required: true },
     entryCount: { type: Number, required: false, default: 0 },
+    data: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Data" }],
 });
 exports.UserSchema = UserSchema;

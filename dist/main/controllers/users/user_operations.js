@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteUser = exports.validateUserData = exports.createNewUser = exports.getUser = void 0;
 const utils_1 = require("../utils");
 const users_static_1 = __importDefault(require("../../model/schemas/Users/users.static"));
+const users_static_2 = require("../../model/schemas/Users/users.static");
 const validateUserData = (req, res, next) => {
     const { first_name, last_name, email, username } = req.body;
     if (first_name && last_name && email && username) {
@@ -24,11 +25,11 @@ const validateUserData = (req, res, next) => {
         else {
             res
                 .status(400)
-                .json({ error: "Please check the provided email!", email });
+                .json({ error: 'Please check the provided email!', email });
         }
     }
     else {
-        res.status(400).json({ error: "Please check the provided user values!" });
+        res.status(400).json({ error: 'Please check the provided user values!' });
     }
 };
 exports.validateUserData = validateUserData;
@@ -38,25 +39,25 @@ const getUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const foundUser = yield users_static_1.default.getUser(username);
         if (foundUser)
             return res.status(200).json({ data: foundUser });
-        return res.status(404).json({ message: "User not found", username });
+        return res.status(404).json(utils_1.userNotFoundHandler(username));
     }
     catch (error) {
         return res
             .status(400)
-            .json({ message: "Error retrieving user data", error });
+            .json({ message: 'Error retrieving user data', error });
     }
 });
 exports.getUser = getUser;
 const createNewUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = req.body;
-    const { username } = req.body;
+    const { first_name, last_name, email, username } = req.body;
     try {
-        const serverResponse = yield users_static_1.default.createUser(user, username);
-        if (serverResponse.username)
+        const user = new users_static_2.User(first_name, last_name, email, username);
+        const userCreated = yield user.save();
+        if (userCreated.username)
             return res.status(201).json({ message: `User ${username} created` });
     }
     catch (error) {
-        res.status(400).json({ message: "Error creating user", error });
+        res.status(400).json({ message: 'Error creating user', error });
     }
 });
 exports.createNewUser = createNewUser;
@@ -67,7 +68,7 @@ const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         return res.status(204).json();
     }
     catch (error) {
-        return res.status(400).json({ message: "Error deleting user", error });
+        return res.status(400).json({ message: 'Error deleting user', error });
     }
 });
 exports.deleteUser = deleteUser;

@@ -21,6 +21,8 @@ const retrieveOpenData = (year, department, xToken, limit = 3) => __awaiter(void
             },
         });
         const response = request.data;
+        if (response.length === 0)
+            throw "Empty Data response.";
         const arrangedData = response
             .slice(0, limit)
             .map((all) => {

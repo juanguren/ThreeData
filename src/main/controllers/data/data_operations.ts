@@ -9,9 +9,16 @@ import {
 } from '../utils';
 import retrieveOpenData from '../../services/open_data';
 import { IUser } from '../../model/schemas/Users/users.type';
+import { EventEmitter } from 'events';
 import dotenv from 'dotenv';
 
+const emitter = new EventEmitter();
 dotenv.config();
+
+// * Logs when a data package is successfuly sent and recorded for X user.
+emitter.on('record_saved', (user, recordId) => {
+  console.log(`Record ${recordId} saved for ${user}`);
+});
 
 const validateDataPackage = (
   req: Request,
@@ -78,6 +85,7 @@ const executeOperation = async (
       };
       const dataRecord = await DataService.saveDataRecord(dataRecordObject);
       if (dataRecord.id) {
+        emitter.emit('record_saved', username, dataRecord.id);
         await UserService.updateUserSearchCount(username);
         return res.status(code).json({ message });
       } else {

@@ -5,14 +5,12 @@ import { User } from '../../model/schemas/Users/users.static';
 
 const validateUserData = (req: Request, res: Response, next: NextFunction) => {
   const { first_name, last_name, email, username } = req.body;
+
   if (first_name && last_name && email && username) {
-    if (checkForValidEmail(email)) {
-      next();
-    } else {
-      res
-        .status(400)
-        .json({ error: 'Please check the provided email!', email });
-    }
+    if (checkForValidEmail(email)) return next();
+    return res
+      .status(400)
+      .json({ error: 'Please check the provided email!', email });
   } else {
     res.status(400).json({ error: 'Please check the provided user values!' });
   }

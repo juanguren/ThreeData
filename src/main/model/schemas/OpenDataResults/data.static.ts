@@ -2,7 +2,7 @@ import { IData } from './data.type';
 import DataSchema from './data.model';
 // * https://medium.com/@mendes.develop/joining-tables-in-mongodb-with-mongoose-489d72c84b60
 
-const saveDataRecord = async (dataObject: any): Promise<IData> => {
+const saveDataRecord = async (dataObject: any): Promise<any> => {
   try {
     return await DataSchema.create(dataObject);
   } catch (error) {

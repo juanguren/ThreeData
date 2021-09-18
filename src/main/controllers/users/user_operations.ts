@@ -5,14 +5,12 @@ import { User } from '../../model/schemas/Users/users.static';
 
 const validateUserData = (req: Request, res: Response, next: NextFunction) => {
   const { first_name, last_name, email, username } = req.body;
+
   if (first_name && last_name && email && username) {
-    if (checkForValidEmail(email)) {
-      next();
-    } else {
-      res
-        .status(400)
-        .json({ error: 'Please check the provided email!', email });
-    }
+    if (checkForValidEmail(email)) return next();
+    return res
+      .status(400)
+      .json({ error: 'Please check the provided email!', email });
   } else {
     res.status(400).json({ error: 'Please check the provided user values!' });
   }
@@ -22,7 +20,7 @@ const getUser = async (req: Request, res: Response) => {
   const { username } = req.params;
   try {
     const foundUser = await UserService.getUser(username);
-    if (foundUser) return res.status(200).json({ data: foundUser });
+    if (foundUser) return res.status(200).json(foundUser);
     return res.status(404).json(userNotFoundHandler(username));
   } catch (error) {
     return res

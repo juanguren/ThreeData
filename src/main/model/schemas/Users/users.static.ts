@@ -18,9 +18,7 @@ const deleteUser = async (username: string): Promise<any> => {
   }
 };
 
-const updateUserSearchCount = async (
-  username: string
-): Promise<IUser | null> => {
+const updateUserSearchCount = async (username: string): Promise<any | null> => {
   try {
     let updatedCount = 1;
     const foundUser = await UserSchema.findOne({ username: username });
@@ -57,7 +55,7 @@ export class User implements UserClass {
     }
   };
 
-  save = async (): Promise<IUser> => {
+  save = async (): Promise<any> => {
     const userObject = {
       first_name: this.first_name,
       last_name: this.last_name,
@@ -66,7 +64,7 @@ export class User implements UserClass {
     };
 
     try {
-      const userExists = await this.getUser(this.username);
+      const userExists: Promise<IUser> = await this.getUser(this.username);
       if (userExists) return userExists;
       return await UserSchema.create(userObject);
     } catch (error) {

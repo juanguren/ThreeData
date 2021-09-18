@@ -1,5 +1,5 @@
-import sendGrid from "@sendgrid/mail";
-import { constructMessageLayout } from "../view/messageTemplate";
+import sendGrid from '@sendgrid/mail';
+import { constructMessageLayout } from '../view/messageTemplate';
 
 const sendMessageWithData = async (userData: any, openData: Array<object>) => {
   const { email } = userData;
@@ -8,8 +8,8 @@ const sendMessageWithData = async (userData: any, openData: Array<object>) => {
     sendGrid.setApiKey(SENDGRID_KEY);
     const messageBody: any = {
       to: email,
-      from: "juanararo@unisabana.edu.co",
-      subject: "HEY!",
+      from: 'juanararo@unisabana.edu.co',
+      subject: 'HEY!',
     };
     const messageLayout = constructMessageLayout(openData, userData);
     messageBody.html = messageLayout;
@@ -20,10 +20,10 @@ const sendMessageWithData = async (userData: any, openData: Array<object>) => {
       status: code,
       message: `Package succesfully sent to ${email}`,
     };
-  } catch (error) {
+  } catch (error: any) {
     return {
-      status: error.statusCode ? error.statusCode : undefined,
-      message: "Error in Message Operation",
+      status: `${error?.statusCode}` || error || undefined,
+      message: 'Error in Message Operation',
       error,
     };
   }

@@ -44,10 +44,15 @@ const createNewUser = async (req: Request, res: Response) => {
 const deleteUser = async (req: Request, res: Response) => {
   const { username } = req.params;
   try {
-    await UserService.deleteUser(username);
+    const wasDeleted = await UserService.deleteUser(username);
+    if (wasDeleted instanceof Error)
+      return res
+        .status(400)
+        .json({ message: `User ${username} doesn't exist` });
+
     return res.status(204).json();
   } catch (error) {
-    return res.status(400).json({ message: 'Error deleting user', error });
+    return res.status(500).json({ message: 'Error deleting user', error });
   }
 };
 

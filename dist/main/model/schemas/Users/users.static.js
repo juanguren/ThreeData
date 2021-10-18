@@ -25,8 +25,12 @@ const getUser = (username) => __awaiter(void 0, void 0, void 0, function* () {
 const deleteUser = (username) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const foundUser = yield users_model_1.default.findOneAndDelete({ username: username });
-        if (foundUser)
-            return foundUser;
+        if (foundUser === null || foundUser === void 0 ? void 0 : foundUser.first_name) {
+            return true;
+        }
+        else {
+            return Error();
+        }
     }
     catch (error) {
         return error;

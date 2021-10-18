@@ -21,10 +21,10 @@ const sendMessageWithData = (userData, openData) => __awaiter(void 0, void 0, vo
         mail_1.default.setApiKey(SENDGRID_KEY);
         const messageBody = {
             to: email,
-            from: "juanararo@unisabana.edu.co",
-            subject: "HEY!",
+            from: 'juanararo@unisabana.edu.co',
+            subject: 'HEY!',
         };
-        const messageLayout = messageTemplate_1.constructMessageLayout(openData, userData);
+        const messageLayout = (0, messageTemplate_1.constructMessageLayout)(openData, userData);
         messageBody.html = messageLayout;
         const messageResponse = yield mail_1.default.send(messageBody);
         const code = messageResponse[0].statusCode;
@@ -35,8 +35,8 @@ const sendMessageWithData = (userData, openData) => __awaiter(void 0, void 0, vo
     }
     catch (error) {
         return {
-            status: error.statusCode ? error.statusCode : undefined,
-            message: "Error in Message Operation",
+            status: `${error === null || error === void 0 ? void 0 : error.statusCode}` || error || undefined,
+            message: 'Error in Message Operation',
             error,
         };
     }

@@ -19,14 +19,11 @@ const users_static_2 = require("../../model/schemas/Users/users.static");
 const validateUserData = (req, res, next) => {
     const { first_name, last_name, email, username } = req.body;
     if (first_name && last_name && email && username) {
-        if (utils_1.checkForValidEmail(email)) {
-            next();
-        }
-        else {
-            res
-                .status(400)
-                .json({ error: 'Please check the provided email!', email });
-        }
+        if ((0, utils_1.checkForValidEmail)(email))
+            return next();
+        return res
+            .status(400)
+            .json({ error: 'Please check the provided email!', email });
     }
     else {
         res.status(400).json({ error: 'Please check the provided user values!' });
@@ -38,8 +35,8 @@ const getUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const foundUser = yield users_static_1.default.getUser(username);
         if (foundUser)
-            return res.status(200).json({ data: foundUser });
-        return res.status(404).json(utils_1.userNotFoundHandler(username));
+            return res.status(200).json(foundUser);
+        return res.status(404).json((0, utils_1.userNotFoundHandler)(username));
     }
     catch (error) {
         return res
@@ -64,11 +61,15 @@ exports.createNewUser = createNewUser;
 const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { username } = req.params;
     try {
-        yield users_static_1.default.deleteUser(username);
+        const wasDeleted = yield users_static_1.default.deleteUser(username);
+        if (wasDeleted instanceof Error)
+            return res
+                .status(400)
+                .json({ message: `User ${username} doesn't exist` });
         return res.status(204).json();
     }
     catch (error) {
-        return res.status(400).json({ message: 'Error deleting user', error });
+        return res.status(500).json({ message: 'Error deleting user', error });
     }
 });
 exports.deleteUser = deleteUser;

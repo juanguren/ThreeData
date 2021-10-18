@@ -18,8 +18,14 @@ const users_static_1 = __importDefault(require("../../model/schemas/Users/users.
 const data_static_1 = __importDefault(require("../../model/schemas/OpenDataResults/data.static"));
 const utils_1 = require("../utils");
 const open_data_1 = __importDefault(require("../../services/open_data"));
+const events_1 = require("events");
 const dotenv_1 = __importDefault(require("dotenv"));
+const emitter = new events_1.EventEmitter();
 dotenv_1.default.config();
+// * Logs when a data package is successfuly sent and recorded for X user.
+emitter.on('record_saved', (user, recordId) => {
+    console.log(`Record ${recordId} saved for ${user}`);
+});
 const validateDataPackage = (req, res, next) => {
     const { year, department } = req.body.data_package;
     const validParams = ['year', 'department'];
@@ -60,12 +66,12 @@ const executeOperation = (req, res, userData, username) => __awaiter(void 0, voi
     const { year, department, limit } = req.body.data_package;
     const { APP_TOKEN } = process.env;
     try {
-        const openDataResult = yield open_data_1.default(year, department, APP_TOKEN, limit);
-        const sendMessage = yield sendgrid_1.default(userData, openDataResult);
+        const openDataResult = yield (0, open_data_1.default)(year, department, APP_TOKEN, limit);
+        const sendMessage = yield (0, sendgrid_1.default)(userData, openDataResult);
         const { status: code, message } = sendMessage;
         if (code === 202) {
             const timestamp = new Date();
-            const organizedData = utils_1.organizeDataIntoRecords(openDataResult);
+            const organizedData = (0, utils_1.organizeDataIntoRecords)(openDataResult);
             const dataRecordObject = {
                 data: organizedData,
                 timestamp,
@@ -73,6 +79,7 @@ const executeOperation = (req, res, userData, username) => __awaiter(void 0, voi
             };
             const dataRecord = yield data_static_1.default.saveDataRecord(dataRecordObject);
             if (dataRecord.id) {
+                emitter.emit('record_saved', username, dataRecord.id);
                 yield users_static_1.default.updateUserSearchCount(username);
                 return res.status(code).json({ message });
             }
@@ -95,7 +102,7 @@ const checkForUserQueries = (req, res) => __awaiter(void 0, void 0, void 0, func
             res.status(200).json(dataResult);
         }
         else {
-            res.status(404).json(utils_1.userNotFoundHandler(username));
+            res.status(404).json((0, utils_1.userNotFoundHandler)(username));
         }
     }
     catch (error) {

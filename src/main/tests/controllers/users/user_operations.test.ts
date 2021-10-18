@@ -8,6 +8,7 @@ import mocks from '../../mocks';
 import UserService, { User } from '../../../model/schemas/Users/users.static';
 import httpMock from 'node-mocks-http';
 
+// This allows to spy on calls to the class constructor and all of its methods too!
 jest.mock('../../../model/schemas/Users/users.static');
 jest.mock('../../../model/schemas/Users/users.model');
 
@@ -39,6 +40,7 @@ describe('Test GET service', () => {
 
 describe('Tests Create New User', () => {
   let req: any, res: any;
+  const mockUsername = 'juanguren';
   beforeAll(async () => {
     req = httpMock.createRequest();
     res = httpMock.createResponse();

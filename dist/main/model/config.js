@@ -15,22 +15,27 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-const databaseConnection = () => __awaiter(void 0, void 0, void 0, function* () {
+const databaseConnection = () => {
     const { DB_PASSWORD } = process.env;
     const URI = `mongodb+srv://juanguren:${DB_PASSWORD}@cluster0.3u8p3.mongodb.net/three_data?retryWrites=true&w=majority`;
-    mongoose_1.default.connect(URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        useCreateIndex: true,
-        useFindAndModify: false,
-    });
-    // Helpers
-    const database = mongoose_1.default.connection;
-    database.once("open", () => __awaiter(void 0, void 0, void 0, function* () {
-        console.log("Connected to database");
-    }));
-    database.on("error", () => {
-        console.log("Error connecting to database");
-    });
-});
+    try {
+        mongoose_1.default.connect(URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            useCreateIndex: true,
+            useFindAndModify: false,
+        });
+        // Helpers
+        const database = mongoose_1.default.connection;
+        database.once('open', () => __awaiter(void 0, void 0, void 0, function* () {
+            console.log('Connected to database');
+        }));
+        database.on('error', () => {
+            console.log('Error connecting to database');
+        });
+    }
+    catch (error) {
+        console.log(error);
+    }
+};
 exports.default = databaseConnection;

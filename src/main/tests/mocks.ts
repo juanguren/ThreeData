@@ -9,4 +9,11 @@ const getUserResponse = {
   __v: 0,
 };
 
-export { getUserResponse };
+const createUserBody = {
+  first_name: 'Juan Felipe',
+  last_name: 'Aranguren',
+  email: 'juan_fe_7@live.com',
+  username: 'juanguren',
+};
+
+export default { getUserResponse, createUserBody };

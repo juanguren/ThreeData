@@ -12,7 +12,11 @@ const getUser = async (username: string): Promise<any> => {
 const deleteUser = async (username: string): Promise<any> => {
   try {
     const foundUser = await UserSchema.findOneAndDelete({ username: username });
-    if (foundUser) return foundUser;
+    if (foundUser?.first_name) {
+      return true;
+    } else {
+      return Error();
+    }
   } catch (error) {
     return error;
   }
